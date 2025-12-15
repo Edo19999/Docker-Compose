@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.sqlite3
+db.sqlite3
+.git
+.gitignore
+.env
+venv/
+.venv/
+.pytest_cache/
+tests/
+.DS_Store
+requests-examples.http

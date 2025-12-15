@@ -4,10 +4,8 @@ services:
   postgres:
     image: postgres:16-alpine
     container_name: postgres
-    environment:
-      POSTGRES_DB: stocks_products
-      POSTGRES_USER: stocks_user
-      POSTGRES_PASSWORD: stocks_password
+    env_file:
+      - .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -23,15 +21,8 @@ services:
       context: ./stocks_products
       dockerfile: Dockerfile
     container_name: backend
-    environment:
-      DJANGO_DEBUG: "False"
-      DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1"
-      DJANGO_SECRET_KEY: "replace-me-in-production"
-      POSTGRES_DB: stocks_products
-      POSTGRES_USER: stocks_user
-      POSTGRES_PASSWORD: stocks_password
-      POSTGRES_HOST: postgres
-      POSTGRES_PORT: "5432"
+    env_file:
+      - .env
     depends_on:
       postgres:
         condition: service_healthy
@@ -39,6 +30,11 @@ services:
       - static_volume:/app/static
     networks:
       - app_network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8000/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   nginx:
     image: nginx:alpine
@@ -60,4 +56,3 @@ volumes:
 networks:
   app_network:
     driver: bridge
-
